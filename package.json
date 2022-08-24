@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "nodemon --exec npx babel-node src/server.js",
+    "start": "nodemon src/server.mjs",
     "start:db": "docker-compose up -d postgres",
     "db:migrate": "npx sequelize db:migrate",
     "db:undo": "npx sequelize db:migrate:undo:all",
@@ -51,6 +51,7 @@
     "bcrypt": "^5.0.1",
     "fastify": "^3.28.0",
     "jsonwebtoken": "^8.5.1",
+    "nanoid": "^4.0.0",
     "pg": "^8.7.3",
     "sequelize": "^6.19.0",
     "sequelize-cli": "^6.4.1"

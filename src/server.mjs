@@ -1,5 +1,5 @@
-import fastify from './index';
-import { sequelize } from './initializers/db';
+import fastify from './index.mjs';
+import { sequelize } from './initializers/db.mjs';
 
 (async () => {
   try {

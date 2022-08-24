@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../initializers/db';
+import { sequelize } from '../initializers/db.mjs';
 
 class User extends Model {}
 

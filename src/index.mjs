@@ -1,9 +1,13 @@
 import Fastify from 'fastify';
 import { hash, compare } from 'bcrypt';
-import { sign, verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
 
-import User from './models/User';
-import { isUserExist } from './utils/user';
+import User from './models/User.mjs';
+import { isUserExist } from './utils/user.mjs';
+import Link from './models/Link.mjs';
+
+const { sign, verify } = jwt;
 
 const fastify = Fastify({
   logger: true,
@@ -60,6 +64,53 @@ fastify.post('/login', {}, async (request, reply) => {
   });
 
   reply.send({ token });
+});
+
+fastify.get('/hash/:hash', async (request, reply) => {
+  const { hash } = request.params;
+  const link = await Link.findOne({ where: { hash } });
+  if (!link) return reply.status(400).send('error');
+
+  reply.send({ link: link.link });
+});
+
+fastify.register((instance, opts, done) => {
+  instance.addHook('onRequest', async (request, reply) => {
+    const { token } = request.headers;
+
+    try {
+      const { id } = await verify(token, SECRET_KEY);
+
+      request.id = id;
+    } catch (err) {
+      return reply.status(401).send({ info: err.message });
+    }
+  });
+
+  instance.get('/links', async (request, reply) => {
+    const links = await Link.findAll({ where: { userId: request.id } });
+
+    reply.send(links);
+  });
+
+  instance.post('/links', async (request, reply) => {
+    const {
+      id,
+      body: { link },
+    } = request;
+
+    const userLink = new Link();
+
+    userLink.userId = id;
+    userLink.hash = nanoid(10);
+    userLink.link = link;
+
+    await userLink.save();
+
+    reply.send(userLink);
+  });
+
+  done();
 });
 
 export default fastify;
