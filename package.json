@@ -10,7 +10,8 @@
     "start:db": "docker-compose up -d postgres",
     "db:migrate": "npx sequelize db:migrate",
     "db:undo": "npx sequelize db:migrate:undo:all",
-    "migration": "npx sequelize migration:create"
+    "migration": "npx sequelize migration:create",
+    "postinstall": "npm run db:migrate"
   },
   "repository": {
     "type": "git",
